@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Markdown Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+  <input type="file" id="fileInput" accept=".txt,.html" style="display: none;" />
+
+  <header class="top-bar">
+    <h1><i class="fa-solid fa-book"></i> Markdown Notes</h1>
+    <input type="text" id="searchNotes" placeholder="Search notes..." />
+    <div class="actions">
+      <button id="pinNote" title="Pin Note"><i class="fa fa-thumbtack"></i></button>
+      <button id="themeToggle" title="Toggle Theme"><i class="fa fa-moon"></i></button>
+    </div>
+  </header>
+
+  <nav class="menubar">
+    <div class="menu-item dropdown">
+      <span class="dropbtn">File</span>
+      <div class="dropdown-content">
+        <button id="menuNew"><i class="fa fa-file"></i> New document</button>
+        <button id="menuOpen"><i class="fa fa-folder-open"></i> Open... <span class="shortcut">Ctrl+O</span></button>
+        <button id="menuSave"><i class="fa fa-save"></i> Save <span class="shortcut">Ctrl+S</span></button>
+        <div class="menu-divider"></div>
+        <button id="menuPrint"><i class="fa fa-print"></i> Print <span class="shortcut">Ctrl+P</span></button>
+        <button id="menuExportPdf"><i class="fa fa-file-pdf"></i> Export to PDF</button>
+      </div>
+    </div>
+
+    <div class="menu-item dropdown">
+      <span class="dropbtn">Edit</span>
+      <div class="dropdown-content">
+        <button id="menuUndo"><i class="fa fa-rotate-left"></i> Undo <span class="shortcut">Ctrl+Z</span></button>
+        <button id="menuRedo"><i class="fa fa-rotate-right"></i> Redo <span class="shortcut">Ctrl+Y</span></button>
+        <div class="menu-divider"></div>
+        <button id="menuCut"><i class="fa fa-scissors"></i> Cut <span class="shortcut">Ctrl+X</span></button>
+        <button id="menuCopy"><i class="fa fa-copy"></i> Copy <span class="shortcut">Ctrl+C</span></button>
+        <button id="menuPaste"><i class="fa fa-paste"></i> Paste <span class="shortcut">Ctrl+V</span></button>
+        <div class="menu-divider"></div>
+        <button id="menuSelectAll">Select all <span class="shortcut">Ctrl+A</span></button>
+        <div class="menu-divider"></div>
+        <button id="menuFind">Find and replace <span class="shortcut">Ctrl+F</span></button>
+      </div>
+    </div>
+
+    <div class="menu-item dropdown">
+      <span class="dropbtn">Insert</span>
+      <div class="dropdown-content">
+        <button id="menuDate"><i class="fa fa-clock"></i> Date/time</button>
+        <button id="menuSpecial"><i class="fa fa-font-awesome"></i> Special character</button>
+        <button id="menuNbsp"><i class="fa fa-i-cursor"></i> Nonbreaking space</button>
+        <div class="menu-divider"></div>
+
+        <div class="dropdown-submenu">
+          <button class="submenu-btn"><i class="fa fa-text-height"></i> Font Size <i class="fa fa-caret-right right-icon"></i></button>
+          <div class="dropdown-content submenu-content">
+            <button class="size-opt" data-size="1">Small</button>
+            <button class="size-opt" data-size="3">Normal</button>
+            <button class="size-opt" data-size="5">Large</button>
+            <button class="size-opt" data-size="7">Huge</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <aside class="sidebar">
+      <h2>My Notes <span id="noteCount">0 notes</span></h2>
+      <div id="noteList"></div>
+      <button id="deleteNote" class="danger-btn-sidebar"><i class="fa fa-trash"></i> Delete Note</button>
+    </aside>
+
+    <section class="editor">
+      <input id="noteTitle" placeholder="Untitled Note" />
+      
+      <div id="editorToolbar" class="toolbar">
+        <button data-format="bold" title="Bold (Ctrl+B)"><i class="fa fa-bold"></i></button>
+        <button data-format="underline" title="Underline (Ctrl+U)"><i class="fa fa-underline"></i></button>
+        <button data-format="italic" title="Italic (Ctrl+I)"><i class="fa fa-italic"></i></button>
+        <button data-format="insertUnorderedList" title="Bullet List"><i class="fa fa-list-ul"></i></button>
+        <button data-format="createLink" title="Insert Link"><i class="fa fa-link"></i></button>
+        
+        <select id="alignSelect" class="toolbar-select" title="Text Alignment">
+            <option value="" disabled selected>Align</option>
+            <option value="justifyLeft">Align Left</option>
+            <option value="justifyCenter">Align Center</option>
+            <option value="justifyRight">Align Right</option>
+        </select>
+      </div>
+
+      <div id="noteContent" class="editable-area" contenteditable="true" spellcheck="false"></div>
+
+      <div class="footer">
+        <span id="wordCount">0 words • 0 chars</span>
+        <span id="lastSaved">Not saved yet</span>
+      </div>
+    </section>
+  </main>
+
+  <div id="statusMessage" class="status-message"></div>
+
+  <div id="findReplaceModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h3>Find and Replace</h3>
+      <div class="form-group">
+        <label>Find:</label>
+        <input type="text" id="findInput" placeholder="Text to find...">
+      </div>
+      <div class="form-group">
+        <label>Replace with:</label>
+        <input type="text" id="replaceInput" placeholder="Replacement text...">
+      </div>
+      <div class="modal-actions">
+        <button id="btnReplace">Replace One</button>
+        <button id="btnReplaceAll">Replace All</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="specialCharModal" class="modal">
+    <div class="modal-content char-picker">
+      <span class="close-modal close-char-modal">&times;</span>
+      <h3>Insert Special Character</h3>
+      <div class="char-grid" id="charGrid"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
